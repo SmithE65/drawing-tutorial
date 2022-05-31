@@ -12,6 +12,11 @@ RenderArea::RenderArea(QWidget *parent)
 
 }
 
+void RenderArea::setBackgroundColor(QColor color)
+{
+    mBackgroundColor = color;
+}
+
 QSize RenderArea::sizeHint() const
 {
     return QSize(400,200);

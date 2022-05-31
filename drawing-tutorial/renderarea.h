@@ -10,6 +10,10 @@ class RenderArea : public QWidget
 public:
     explicit RenderArea(QWidget *parent = nullptr);
 
+    void setBackgroundColor(QColor color);
+
+    enum Shapes { Astroid, Cycloid, HuygensCycloid, HypoCycloid };
+
 signals:
 
 
