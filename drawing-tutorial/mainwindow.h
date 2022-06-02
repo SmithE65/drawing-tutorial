@@ -24,7 +24,19 @@ private slots:
 
     void on_hypoCycloidButton_clicked();
 
+    void on_backgroundColorButton_clicked();
+
+    void on_lineColorButton_clicked();
+
+    void on_scaleSpinner_valueChanged(double arg1);
+
+    void on_intervalSpinner_valueChanged(double arg1);
+
+    void on_stepSpinner_valueChanged(int arg1);
+
 private:
     Ui::MainWindow *ui;
+
+    void updateSpinners();
 };
 #endif // MAINWINDOW_H

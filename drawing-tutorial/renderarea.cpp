@@ -1,22 +1,70 @@
 #include "renderarea.h"
 
-#include "parametricshapes.h"
 #include <QPaintEvent>
 #include <QPainter>
 #include <QColor>
+
+#include "drawsettings.h"
+#include "parametricshapes.h"
 
 RenderArea::RenderArea(QWidget *parent)
     : QWidget{parent},
       mBackgroundColor(QColorConstants::Blue),
       mShapeColor(QColorConstants::White),
-      mShape(ParametricShapes::Astroid())
+      mShape(ParametricShapes::Astroid()),
+      mSettings(mShape.stepCount(), mShape.intervalLength(), mShape.scale())
 {
-
+    onShapeChanged();
 }
 
 void RenderArea::setBackgroundColor(QColor color)
 {
     mBackgroundColor = color;
+}
+
+QColor RenderArea::backgroundColor() const
+{
+    return mBackgroundColor;
+}
+
+void RenderArea::setShapeColor(QColor color)
+{
+    mShapeColor = color;
+}
+
+QColor RenderArea::shapeColor() const
+{
+    return mShapeColor;
+}
+
+void RenderArea::setScale(float scale)
+{
+    mSettings.setScale(scale);
+}
+
+float RenderArea::scale() const
+{
+    return mSettings.scale();
+}
+
+void RenderArea::setInterval(float interval)
+{
+    mSettings.setIntervalLength(interval);
+}
+
+float RenderArea::interval() const
+{
+    return mSettings.intervalLength();
+}
+
+void RenderArea::setSteps(int steps)
+{
+    mSettings.setStepCount(steps);
+}
+
+int RenderArea::steps() const
+{
+    return mSettings.stepCount();
 }
 
 QSize RenderArea::sizeHint() const
@@ -32,11 +80,21 @@ QSize RenderArea::minimumSizeHint() const
 void RenderArea::setShape(ParametricShape shape)
 {
     mShape = shape;
+    onShapeChanged();
 }
 
 ParametricShape RenderArea::shape() const
 {
     return mShape;
+}
+
+QPoint RenderArea::toPixel(QPointF pointF)
+{
+    auto center = this->rect().center();
+    QPoint pixel;
+    pixel.setX(pointF.x() * mSettings.scale() + center.x());
+    pixel.setY(pointF.y() * mSettings.scale() + center.y());
+    return pixel;
 }
 
 void RenderArea::paintEvent(QPaintEvent *event)
@@ -49,18 +107,22 @@ void RenderArea::paintEvent(QPaintEvent *event)
     painter.setPen(mShapeColor);
     painter.drawRect(this->rect());
 
-    auto center = this->rect().center();
-    auto interval = mShape.intervalLength();
-    auto stepCount = mShape.stepCount();
-    auto scale = mShape.scale();
+    auto interval = mSettings.intervalLength();
+    auto stepCount = mSettings.stepCount();
     auto step = interval / stepCount;
+    auto prev = toPixel(mShape.Compute(0));
 
-    for (float t = 0; t < interval; t += step)
+    for (float t = step; t < interval; t += step)
     {
-        auto point = mShape.Compute(t);
-        QPoint pixel;
-        pixel.setX(point.x() * scale + center.x());
-        pixel.setY(point.y() * scale + center.y());
-        painter.drawPoint(pixel);
+        auto pixel = toPixel(mShape.Compute(t));
+        painter.drawLine(pixel, prev);
+        prev = pixel;
     }
+
+    painter.drawLine(toPixel(mShape.Compute(interval)), prev);
+}
+
+void RenderArea::onShapeChanged()
+{
+    mSettings = DrawSettings{mShape.stepCount(), mShape.intervalLength(), mShape.scale()};
 }
