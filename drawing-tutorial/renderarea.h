@@ -1,6 +1,8 @@
 #ifndef RENDERAREA_H
 #define RENDERAREA_H
 
+#include "parametricshape.h"
+
 #include <QWidget>
 #include <QColor>
 
@@ -22,8 +24,8 @@ public:
     QSize sizeHint() const Q_DECL_OVERRIDE;
     QSize minimumSizeHint() const Q_DECL_OVERRIDE;
 
-    void setShape(ShapeType shape);
-    ShapeType shape() const;
+    void setShape(ParametricShape shape);
+    ParametricShape shape() const;
 
     // QWidget interface
 protected:
@@ -31,18 +33,9 @@ protected:
 
 private:
     void onShapeChanged();
-    QPointF compute(float t);
-    QPointF computeAstroid(float t);
-    QPointF computeCycloid(float t);
-    QPointF computeHuygens(float t);
-    QPointF computeHypoCycloid(float t);
-
-    int mStepCount;
-    float mIntervalLength;
-    float mScale;
     QColor mBackgroundColor;
     QColor mShapeColor;
-    ShapeType mShape;
+    ParametricShape mShape;
 };
 
 #endif // RENDERAREA_H

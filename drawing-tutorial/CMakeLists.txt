@@ -20,6 +20,9 @@ set(PROJECT_SOURCES
         mainwindow.h
         mainwindow.ui
         renderarea.h renderarea.cpp
+        drawsettings.h drawsettings.cpp
+        parametricshape.h parametricshape.cpp
+        parametricshapes.h parametricshapes.cpp
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
